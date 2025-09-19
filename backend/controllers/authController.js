@@ -268,3 +268,55 @@ export const resetPassword = async(req, res)=> {
         res.status(500).json({success: false, message: "Internal server error"});
     }
 }
+
+import { OAuth2Client } from "google-auth-library";
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// Google Login
+export const googleLogin = async (req, res) => {
+  try {
+    const { credential } = req.body; // ID token from frontend
+
+    if (!credential) {
+      return res.status(400).json({ success: false, message: "No credential provided" });
+    }
+
+    // Verify token with Google
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name } = payload;
+
+    // Check if user already exists
+    let user = await userModel.findOne({ email });
+
+    if (!user) {
+      // New Google user → save in DB
+      user = new userModel({
+        name,
+        email,
+        password: await bcrypt.hash("", 10),
+        isAccountVerified: true, 
+      });
+      await user.save();
+    }
+
+    // Create JWT token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "2d" });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV == "production" ? "none" : "lax",
+      maxAge: 2 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({ success: true, message: "Google login successful" });
+  } catch (error) {
+    console.error("Error in googleLogin:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
