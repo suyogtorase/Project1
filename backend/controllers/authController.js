@@ -9,9 +9,9 @@ import { emailTemplates } from "../utils/emailTemplates.js";
 
 // user register functionality
 export const userRegister = async (req, res) => {
-    const {name, email, password} = req.body;
+    const {name, email, password, role} = req.body;
 
-    if(!name || !email || !password){
+    if(!name || !email || !password || !role){
         return res.status(400).json({success: false, message: 'All fields are required'});
     }
 
@@ -24,7 +24,13 @@ export const userRegister = async (req, res) => {
 
         const hashedpassword = await bcrypt.hash(password, 10);
 
-        const user = new userModel({name, email, password: hashedpassword});
+        const user = new userModel({
+            name, 
+            email, 
+            password: hashedpassword, 
+            role,
+            isVerifiedByAdmin: (role == "Student") ? true : false,
+        });
         await user.save();
 
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '2d'});
@@ -67,6 +73,10 @@ export const userLogin = async (req, res)=> {
         
         if(!user){
             return res.status(400).json({success: false, message: "Invalid Email"});
+        }
+
+        if(user.role == "Teacher" && !user.isVerifiedByAdmin){
+            return res.status(400).json({success: false, message: "Not Verified by Admin"});
         }
         
         const isMatch = await bcrypt.compare(password, user.password);
@@ -270,12 +280,13 @@ export const resetPassword = async(req, res)=> {
 }
 
 import { OAuth2Client } from "google-auth-library";
+import adminModel from "../models/adminModel.js";
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Google Login
 export const googleLogin = async (req, res) => {
   try {
-    const { credential } = req.body; // ID token from frontend
+    const { credential, role } = req.body; // ID token and role from frontend
 
     if (!credential) {
       return res.status(400).json({ success: false, message: "No credential provided" });
@@ -298,8 +309,10 @@ export const googleLogin = async (req, res) => {
       user = new userModel({
         name,
         email,
+        role,
         password: await bcrypt.hash("", 10),
         isAccountVerified: true, 
+        isVerifiedByAdmin: (role == "Student") ? true : false,
       });
       await user.save();
     }
@@ -320,3 +333,84 @@ export const googleLogin = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+// admin register
+export const adminRegister = async (req, res) => {
+    const {name, email, password} = req.body;
+
+    if(!name || !email || !password){
+        return res.status(400).json({success: false, message: 'All fields are required'});
+    }
+
+    try {
+        const existingAdmin = await adminModel.findOne({email});
+        
+        if(existingAdmin){
+            return res.status(400).json({success: false, message: "User already exists"});
+        }
+
+        const hashedpassword = await bcrypt.hash(password, 10);
+
+        const admin = new adminModel({
+            name, 
+            email, 
+            password: hashedpassword,
+        });
+        await admin.save();
+
+        const token = jwt.sign({id: admin._id}, process.env.JWT_SECRET, {expiresIn: '2d'});
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV == 'production' ? 'none' : 'lax',
+            maxAge: 2 * 24 * 60 * 60 * 1000
+        })
+
+        res.status(200).json({success: true, message: "Admin Registered successfully"});
+        
+    } catch (error) {
+        console.log("Error in admin register, ", error);
+        res.status(500).json({success: false, message: "Internal server error"});
+    }
+}
+
+// admin login
+export const adminLogin = async (req, res)=> {
+    const {email, password} = req.body;
+    
+    if(!email || !password){
+        return res.status(400).json({success: false, message: 'Email and password are required'});
+    }
+    
+    try {
+        const admin = await adminModel.findOne({email});
+        
+        if(!admin){
+            return res.status(400).json({success: false, message: "Invalid Email"});
+        }
+        
+        const isMatch = await bcrypt.compare(password, admin.password);
+        
+        if(!isMatch){
+            return res.status(400).json({success: false, message: "Invalid credencials"});
+        }
+        
+        const token = jwt.sign({id: admin._id}, process.env.JWT_SECRET, {expiresIn: '2d'});
+        
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV == 'production' ? 'none' : 'strict',
+            maxAge: 2 * 24 * 60 * 60 * 1000
+        });
+
+
+        res.status(200).json({success: true, message: "Admin logged in successfully"});
+        
+    } catch (error) {
+        console.log("Error in admin login, ", error);
+        res.status(500).json({success: false, message: "Internal server error"});
+    }
+};
+
