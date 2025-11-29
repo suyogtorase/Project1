@@ -1,6 +1,7 @@
 import express from "express";
-import { googleLogin, isAuthenticated, logout, resetPassword, sendResetOtp, sendVerifyOtp, userLogin, userRegister, verifyEmail } from "../controllers/authController.js";
+import { adminLogin, adminRegister, googleLogin, isAuthenticated, logout, resetPassword, sendResetOtp, sendVerifyOtp, userLogin, userRegister, verifyEmail } from "../controllers/authController.js";
 import userAuth from "../middleware/userAuth.js";
+import adminAuth from "../middleware/adminAuth.js";
 
 const authRouter = express.Router();
 
@@ -13,5 +14,8 @@ authRouter.get('/is-auth', userAuth, isAuthenticated);
 authRouter.post('/send-reset-otp', sendResetOtp);
 authRouter.post('/reset-password', resetPassword);
 authRouter.post('/google', googleLogin);
+authRouter.post('/admin-register', adminRegister);
+authRouter.post('/admin-login', adminLogin);
+authRouter.get('/admin-auth', adminAuth, isAuthenticated);
 
 export default authRouter;
