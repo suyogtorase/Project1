@@ -92,7 +92,7 @@ export const AppContextProvider = (props) => {
             }
         } catch (error) {
             setAdminData(null)
-            // toast.error(error.message)
+            toast.error(error.response?.data?.message || error.message)
         }
     }
 

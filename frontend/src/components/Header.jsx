@@ -114,7 +114,7 @@ const Header = () => {
             </span>
             <span className='absolute bottom-2 left-0 w-full h-3 bg-[#8b7cf6]/30 -rotate-1' />
           </span>
-          {' '}for NGO Students
+          {' '}for Institute Students
         </h2>
 
         {/* Description */}
@@ -162,7 +162,7 @@ const Header = () => {
             </div>
             <div className="text-left">
               <p className="text-2xl font-bold text-white">50+</p>
-              <p className="text-sm text-gray-400">NGO Partners</p>
+              <p className="text-sm text-gray-400">Institute Partners</p>
             </div>
           </div>
         </div>

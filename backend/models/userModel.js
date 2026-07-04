@@ -9,12 +9,15 @@ const userSchema = new mongoose.Schema({
     isAccountVerified: {type: Boolean, default: false},
     resetOtp: {type: String, default: ""},
     resetOtpExpiresAt: {type: Number, default: 0},
-    role: {type: String, enum: ["Teacher", "Student"], required: true},
+    role: {type: String, enum: ["Teacher", "Student", "Administrator"], required: true},
     createdAt: {type: Date, default: Date.now()},
     isVerifiedByAdmin: {type: Boolean, default: false},
     profilePic: {type: String, default: ""},
-    bio: {type: String}
+    bio: {type: String},
+    institute: {type: mongoose.Schema.Types.ObjectId, ref: "institute"},
+    rollno: {type: String, default: ""},
+    level: {type: String, default: ""},
 })
 
-const userModel = mongoose.model.user || mongoose.model('user', userSchema);
+const userModel = mongoose.models.user || mongoose.model('user', userSchema);
 export default userModel;
