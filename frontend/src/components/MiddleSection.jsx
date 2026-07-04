@@ -21,7 +21,7 @@ const MiddleSection = () => {
     },
     {
       icon: <Users size={40} />,
-      title: "NGO Dashboard",
+      title: "Institute Dashboard",
       description: "Manage batches, monitor students, and view comprehensive reports.",
       color: "#10b981",
       gradient: "from-green-500/20 to-green-600/20"
@@ -45,7 +45,7 @@ const MiddleSection = () => {
             What makes us different?
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Purpose-built for NGO students with features that actually matter
+            Purpose-built for Institute students with features that actually matter
           </p>
         </div>
 

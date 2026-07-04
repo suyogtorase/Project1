@@ -18,6 +18,10 @@ const userAuth = async (req, res, next) => {
         }
 
         req.user = await userModel.findById(decodedToken.id);
+        
+        if (!req.user) {
+            return res.status(401).json({ success: false, message: "Not Authorized as User. Please login again." });
+        }
 
         next();
     } catch (error) {

@@ -3,10 +3,10 @@ import axios from "axios";
 import { AppContent } from "../context/AppContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, XCircle, Mail, User, Clock, Shield } from "lucide-react";
+import { CheckCircle, XCircle, Mail, User, Clock, Shield, Building, LogOut } from "lucide-react";
 
 const AdminDashboard = () => {
-  const { backendUrl, isAdminLoggedIn, getAdminData } = useContext(AppContent);
+  const { backendUrl, isAdminLoggedIn, getAdminData, setIsAdminLoggedIn } = useContext(AppContent);
 
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -80,20 +80,45 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      const { data } = await axios.post(backendUrl + '/api/auth/logout', {}, {
+        withCredentials: true,
+      });
+
+      if (data.success) {
+        setIsAdminLoggedIn(false);
+        navigate('/');
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white">
       {/* Header Section */}
       <div className="bg-slate-900/50 backdrop-blur-sm border-b border-slate-800/50 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 py-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Shield className="w-8 h-8 text-indigo-400" />
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Admin Dashboard
-            </h1>
+        <div className="max-w-6xl mx-auto px-6 py-6 flex justify-between items-center">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <Shield className="w-8 h-8 text-indigo-400" />
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                Admin Dashboard
+              </h1>
+            </div>
+            <p className="text-slate-400 ml-11">
+              Review and manage institute creation requests
+            </p>
           </div>
-          <p className="text-slate-400 ml-11">
-            Review and manage teacher verification requests
-          </p>
+          
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-lg transition-all hover:scale-105"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="hidden sm:inline">Logout</span>
+          </button>
         </div>
       </div>
 
@@ -129,15 +154,15 @@ const AdminDashboard = () => {
               <CheckCircle className="w-16 h-16 text-green-400" />
             </div>
             <p className="text-xl font-semibold text-slate-300 mb-2">All caught up!</p>
-            <p className="text-slate-500">No pending teacher verification requests at the moment.</p>
+            <p className="text-slate-500">No pending institute creation requests at the moment.</p>
           </div>
         )}
 
         {/* Request List */}
         <div className="space-y-4">
-          {requests.map((teacher, index) => (
+          {requests.map((institute, index) => (
             <div
-              key={teacher._id}
+              key={institute._id}
               className="group bg-slate-900/50 backdrop-blur-sm border border-slate-800/50 rounded-xl p-6 hover:border-indigo-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10"
               style={{
                 animation: `fadeIn 0.5s ease-out ${index * 0.1}s both`
@@ -147,15 +172,15 @@ const AdminDashboard = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full p-2">
-                      <User className="w-5 h-5 text-white" />
+                      <Building className="w-5 h-5 text-white" />
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold text-white group-hover:text-indigo-300 transition-colors">
-                        {teacher.name}
+                        {institute.name} <span className="text-sm font-normal text-gray-400">(by {institute.administrator?.name})</span>
                       </h3>
                       <div className="flex items-center gap-2 mt-1">
                         <Mail className="w-4 h-4 text-slate-500" />
-                        <p className="text-slate-400 text-sm">{teacher.email}</p>
+                        <p className="text-slate-400 text-sm">{institute.administrator?.email}</p>
                       </div>
                     </div>
                   </div>
@@ -163,21 +188,21 @@ const AdminDashboard = () => {
 
                 <div className="flex gap-3">
                   <button
-                    onClick={() => acceptRequest(teacher._id)}
-                    disabled={processingId === teacher._id}
+                    onClick={() => acceptRequest(institute._id)}
+                    disabled={processingId === institute._id}
                     className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     <CheckCircle className="w-4 h-4" />
-                    {processingId === teacher._id ? "Processing..." : "Accept"}
+                    {processingId === institute._id ? "Processing..." : "Accept"}
                   </button>
 
                   <button
-                    onClick={() => rejectRequest(teacher._id)}
-                    disabled={processingId === teacher._id}
+                    onClick={() => rejectRequest(institute._id)}
+                    disabled={processingId === institute._id}
                     className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     <XCircle className="w-4 h-4" />
-                    {processingId === teacher._id ? "Processing..." : "Reject"}
+                    {processingId === institute._id ? "Processing..." : "Reject"}
                   </button>
                 </div>
               </div>

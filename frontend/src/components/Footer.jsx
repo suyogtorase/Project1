@@ -13,7 +13,7 @@ const Footer = () => {
               <span className="text-2xl font-bold text-white">EduFlex</span>
             </div>
             <p className="text-gray-400 mb-6 leading-relaxed">
-              Adaptive learning platform designed specifically for NGO students. Making quality education accessible to everyone.
+              Adaptive learning platform designed specifically for Institute students. Making quality education accessible to everyone.
             </p>
             <div className="flex gap-4">
               <a href="#" className="w-10 h-10 bg-[#1a1a2e] rounded-xl flex items-center justify-center hover:bg-[#2a2a3e] hover:text-[#8b7cf6] transition-all cursor-pointer border border-gray-800 group">
@@ -117,7 +117,7 @@ const Footer = () => {
         <div className="pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-400 text-center md:text-left">
-              © {new Date().getFullYear()} EduFlex — Adaptive Learning for NGO Students
+              © {new Date().getFullYear()} EduFlex — Adaptive Learning for Institute Students
             </p>
             <div className="flex items-center gap-2 text-sm text-gray-500">
               <span>Built with</span>

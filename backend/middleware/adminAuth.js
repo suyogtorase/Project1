@@ -19,6 +19,10 @@ const adminAuth = async (req, res, next) => {
 
         req.admin = await adminModel.findById(decodedToken.id);
 
+        if (!req.admin) {
+            return res.status(401).json({ success: false, message: "Not Authorized as Admin. Please login again." });
+        }
+
         next();
     } catch (error) {
         console.log("Error in adminAuth:", error.message);

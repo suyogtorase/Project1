@@ -43,14 +43,18 @@ export const userRegister = async (req, res) => {
         })
         
         // sending welcome email
-        const mailOptions = {
-            from: process.env.GMAIL_USER,
-            to: email,
-            subject: emailTemplates.welcome(name).subject,
-            html: emailTemplates.welcome(name).html
+        try {
+            const mailOptions = {
+                from: process.env.GMAIL_USER,
+                to: email,
+                subject: emailTemplates.welcome(name).subject,
+                html: emailTemplates.welcome(name).html
+            }
+            await transporter.sendMail(mailOptions);
+        } catch (mailError) {
+            console.error("Failed to send welcome email:", mailError.message);
+            // We don't want to fail the entire registration just because the welcome email failed.
         }
-
-        await transporter.sendMail(mailOptions);
 
         res.status(200).json({success: true, message: "User Registered successfully"});
         
@@ -75,8 +79,10 @@ export const userLogin = async (req, res)=> {
             return res.status(400).json({success: false, message: "Invalid Email"});
         }
 
-        if(user.role == "Teacher" && !user.isVerifiedByAdmin){
-            return res.status(400).json({success: false, message: "Not Verified by Admin"});
+        if(user.role == "Administrator" && !user.isVerifiedByAdmin){
+            // They can login, but they might not have an approved institute yet.
+            // But we don't strictly block login here since they need to login to request an institute.
+            // So we can remove this check completely, or change it. Let's just remove the teacher check.
         }
         
         const isMatch = await bcrypt.compare(password, user.password);
@@ -148,9 +154,14 @@ export const sendVerifyOtp = async (req, res) => {
       html: emailTemplates.verifyOtp(otp).html,
     };
 
-    await transporter.sendMail(mailOptions);
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (mailError) {
+      console.error("Failed to send verification OTP email:", mailError.message);
+      console.log("DEVELOPMENT: The verification OTP generated is:", otp);
+    }
 
-    res.status(200).json({ success: true, message: "OTP sent successfully to email" });
+    res.status(200).json({ success: true, message: "OTP processed (check console if email failed)" });
   } catch (error) {
     console.error("Error in sendVerifyOtp:", error);
     res.status(500).json({ success: false, message: "Internal server error", error });
@@ -230,9 +241,14 @@ export const sendResetOtp = async(req, res)=> {
             html: emailTemplates.resetPasswordOtp(otp).html,
         };
 
-        await transporter.sendMail(mailOptions);
+        try {
+            await transporter.sendMail(mailOptions);
+        } catch (mailError) {
+            console.error("Failed to send reset OTP email:", mailError.message);
+            console.log("DEVELOPMENT: The reset OTP generated is:", otp);
+        }
 
-        res.status(200).json({ success: true, message: "OTP sent successfully to email" });
+        res.status(200).json({ success: true, message: "OTP processed (check console if email failed)" });
 
     } catch (error) {
         console.log("Error in sendResetOtp ", error);

@@ -1,5 +1,6 @@
 import { transporter } from "../config/mail.js";
 import userModel from "../models/userModel.js"
+import instituteModel from "../models/instituteModel.js";
 import dotenv from "dotenv";
 
 // get admin Data
@@ -25,10 +26,9 @@ export const getAdminData = async(req, res) => {
 // get all the request
 export const getAllPendingRequest = async(req, res) => {
     try {
-        const pendingRequests = await userModel.find({
-            role : "Teacher",
-            isVerifiedByAdmin: false
-        });
+        const pendingRequests = await instituteModel.find({
+            status : "Pending"
+        }).populate("administrator", "name email");
 
         res.status(200).json({success: true, message: "List is given", pendingRequests});
     } catch (error) {
@@ -46,23 +46,35 @@ export const acceptRequest = async(req, res) => {
     }
 
     try {
-        const user = await userModel.findById(id);
+        const institute = await instituteModel.findById(id).populate("administrator");
 
-        if(!user){
-            return res.status(404).json({success: false, message: "User not found"});
+        if(!institute){
+            return res.status(404).json({success: false, message: "Institute not found"});
         }
 
-        user.isVerifiedByAdmin = true;
-        await user.save();
+        institute.status = "Approved";
+        await institute.save();
         
-        const mailOptions = {
-            from: process.env.GMAIL_USER,
-            to: user.email,
-            subject: "Request accepted by admin",
-            text: `Dear ${user.name} your request has been accepted by admin`
+        if (institute.administrator) {
+            const adminUser = await userModel.findById(institute.administrator._id);
+            if (adminUser) {
+                adminUser.isVerifiedByAdmin = true;
+                await adminUser.save();
+                
+                const mailOptions = {
+                    from: process.env.GMAIL_USER,
+                    to: adminUser.email,
+                    subject: "Institute Request accepted by admin",
+                    text: `Dear ${adminUser.name}, your request to create the institute ${institute.name} has been accepted by admin`
+                }
+        
+                try {
+                    await transporter.sendMail(mailOptions);
+                } catch (mailError) {
+                    console.error("Failed to send acceptance email:", mailError.message);
+                }
+            }
         }
-
-        await transporter.sendMail(mailOptions);
 
         res.status(200).json({success: true, message: "Accepted request"});
 
@@ -81,23 +93,35 @@ export const rejectRequest = async(req, res) => {
     }
 
     try {
-        const user = await userModel.findById(id);
+        const institute = await instituteModel.findById(id).populate("administrator");
 
-        if(!user){
-            return res.status(400).json({success: false, message: "User not found"});
+        if(!institute){
+            return res.status(400).json({success: false, message: "Institute not found"});
         }
 
-        user.isVerifiedByAdmin = false;
-        await user.save();
+        institute.status = "Rejected";
+        await institute.save();
 
-        const mailOptions = {
-            from: process.env.GMAIL_USER,
-            to: user.email,
-            subject: "Request rejected by admin",
-            text: `Dear ${user.name} your request has been rejected by admin`
+        if (institute.administrator) {
+            const adminUser = await userModel.findById(institute.administrator._id);
+            if (adminUser) {
+                adminUser.isVerifiedByAdmin = false;
+                await adminUser.save();
+
+                const mailOptions = {
+                    from: process.env.GMAIL_USER,
+                    to: adminUser.email,
+                    subject: "Institute Request rejected by admin",
+                    text: `Dear ${adminUser.name}, your request to create the institute ${institute.name} has been rejected by admin`
+                }
+        
+                try {
+                    await transporter.sendMail(mailOptions);
+                } catch (mailError) {
+                    console.error("Failed to send rejection email:", mailError.message);
+                }
+            }
         }
-
-        await transporter.sendMail(mailOptions);
 
         res.status(200).json({success: true, message: "Rejected request"});
 
@@ -106,4 +130,3 @@ export const rejectRequest = async(req, res) => {
         res.status(500).json({success: false, message: "Internal server Error"});
     }
 };
-

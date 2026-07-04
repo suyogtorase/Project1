@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { assets } from '../assets/assets';
 import { useNavigate } from 'react-router-dom';
 import { AppContent } from '../context/AppContext';
@@ -10,12 +10,19 @@ const AdminLogin = () => {
 
   const { 
     backendUrl, 
+    isAdminLoggedIn,
     setIsAdminLoggedIn, 
     getAdminData 
   } = useContext(AppContent);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (isAdminLoggedIn) {
+      navigate('/admin/dashboard');
+    }
+  }, [isAdminLoggedIn, navigate]);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
