@@ -15,7 +15,7 @@ const Login = () => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [role, setRole] = useState('Student')
+  const [role, setRole] = useState('Teacher')
   const [showPassword, setShowPassword] = useState(false)
 
   const onSubmitHandler = async (e) => {
@@ -133,19 +133,7 @@ const Login = () => {
           {state === 'Sign Up' && (
             <div className='space-y-2'>
               <label className='text-xs font-medium text-gray-300'>I am a:</label>
-              <div className='grid grid-cols-3 gap-2'>
-                <button
-                  type="button"
-                  onClick={() => setRole('Student')}
-                  className={`flex flex-col items-center gap-1.5 p-3 rounded-lg border-2 transition-all ${
-                    role === 'Student'
-                      ? 'bg-[#8b7cf6]/10 border-[#8b7cf6] text-white'
-                      : 'bg-[#2a2a3e] border-gray-700 text-gray-400 hover:border-gray-600'
-                  }`}
-                >
-                  <GraduationCap className="h-5 w-5" />
-                  <span className="font-medium text-xs">Student</span>
-                </button>
+              <div className='grid grid-cols-2 gap-2'>
                 <button
                   type="button"
                   onClick={() => setRole('Teacher')}
