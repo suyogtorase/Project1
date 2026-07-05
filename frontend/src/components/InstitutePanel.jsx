@@ -20,14 +20,30 @@ const InstitutePanel = () => {
 
     // New states for Assign Student to Classroom
     const [assignStudentId, setAssignStudentId] = useState('');
+    const [assignStudentName, setAssignStudentName] = useState('');
     const [assignClassroomId, setAssignClassroomId] = useState('');
     const [classrooms, setClassrooms] = useState([]);
+    const [instituteStudents, setInstituteStudents] = useState([]);
+    const [showStudentDropdown, setShowStudentDropdown] = useState(false);
 
     useEffect(() => {
         if (userData?.role === 'Administrator' && userData?.isVerifiedByAdmin) {
             fetchClassrooms();
+            fetchInstituteStudents();
         }
     }, [userData]);
+    
+    const fetchInstituteStudents = async () => {
+        try {
+            axios.defaults.withCredentials = true;
+            const { data } = await axios.get(backendUrl + '/api/user/get-institute-students');
+            if (data.success) {
+                setInstituteStudents(data.students);
+            }
+        } catch (error) {
+            console.error("Error fetching institute students:", error);
+        }
+    };
 
     const fetchClassrooms = async () => {
         try {
@@ -126,6 +142,7 @@ const InstitutePanel = () => {
             if (data.success) {
                 toast.success('Student assigned to classroom successfully');
                 setAssignStudentId('');
+                setAssignStudentName('');
                 setAssignClassroomId('');
             } else {
                 toast.error(data.message);
@@ -280,14 +297,45 @@ const InstitutePanel = () => {
                                     <BookOpen className="h-4 w-4 text-[#8b7cf6]" /> Assign Student to Classroom
                                 </h4>
                                 <p className="text-xs text-gray-400 mb-2">Assign an existing student of your institute to a classroom.</p>
-                                <input
-                                    type="text"
-                                    placeholder="Student User ID"
-                                    value={assignStudentId}
-                                    onChange={(e) => setAssignStudentId(e.target.value)}
-                                    required
-                                    className="w-full px-3 py-2 bg-[#2a2a3e] border border-gray-600 rounded-lg text-white text-sm focus:border-[#8b7cf6] outline-none"
-                                />
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        placeholder="Type student name..."
+                                        value={assignStudentName}
+                                        onChange={(e) => {
+                                            setAssignStudentName(e.target.value);
+                                            setAssignStudentId('');
+                                            setShowStudentDropdown(true);
+                                        }}
+                                        onFocus={() => setShowStudentDropdown(true)}
+                                        required
+                                        className="w-full px-3 py-2 bg-[#2a2a3e] border border-gray-600 rounded-lg text-white text-sm focus:border-[#8b7cf6] outline-none"
+                                    />
+                                    {showStudentDropdown && assignStudentName && (
+                                        <div className="absolute z-10 w-full mt-1 bg-[#2a2a3e] border border-gray-600 rounded-lg max-h-40 overflow-y-auto shadow-xl">
+                                            {instituteStudents
+                                                .filter(s => s.name.toLowerCase().includes(assignStudentName.toLowerCase()))
+                                                .map(student => (
+                                                    <div 
+                                                        key={student._id} 
+                                                        className="px-3 py-2 text-sm text-white hover:bg-[#8b7cf6] cursor-pointer"
+                                                        onMouseDown={(e) => {
+                                                            // onMouseDown instead of onClick to fire before input blur
+                                                            e.preventDefault();
+                                                            setAssignStudentName(student.name);
+                                                            setAssignStudentId(student._id);
+                                                            setShowStudentDropdown(false);
+                                                        }}
+                                                    >
+                                                        {student.name} <span className="text-gray-400 text-xs ml-1">({student.email})</span>
+                                                    </div>
+                                                ))}
+                                            {instituteStudents.filter(s => s.name.toLowerCase().includes(assignStudentName.toLowerCase())).length === 0 && (
+                                                <div className="px-3 py-2 text-sm text-gray-400">No matching students found</div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                                 <select
                                     value={assignClassroomId}
                                     onChange={(e) => setAssignClassroomId(e.target.value)}

@@ -10,6 +10,7 @@ import AdminDashboard from './pages/AdminDashBoard'
 import ChatHome from './pages/ChatHome'
 import ProfilePage from './pages/ProfilePage'
 import Classroom from './pages/Classroom'
+import ClassroomDetails from './pages/ClassroomDetails'
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
         <Route path='/login' element={<Login/>}/>
         <Route path='/profile' element={<ProfilePage/>}/>
         <Route path='/classroom' element={<Classroom/>}/>
+        <Route path='/classroom/:id' element={<ClassroomDetails/>}/>
         <Route path='/email-verify' element={<EmailVerify/>}/>
         <Route path='/reset-password' element={<ResetPassword/>}/>
         <Route path='/admin-login' element={<AdminLogin/>}/>
