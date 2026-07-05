@@ -43,4 +43,29 @@ export const emailTemplates = {
       </div>
     `,
   }),
+
+  // 4. Student Admission email
+  studentAdmission: (userName, password, loginLink) => ({
+    subject: "Welcome to Project1 - Admission Successful 🎉",
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+        <h2 style="color: #4F46E5;">Welcome, ${userName || "Student"}!</h2>
+        <p>You have been successfully enrolled in your institute on Project1.</p>
+        <p>Your account has been created by your administrator. Here are your login credentials:</p>
+        
+        <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; margin: 20px 0;">
+          <p style="margin: 0 0 10px 0;"><strong>Temporary Password:</strong> <code style="background-color: #e5e7eb; padding: 3px 6px; border-radius: 4px; font-size: 16px;">${password}</code></p>
+        </div>
+
+        <p>Please log in using your email address and the password provided above.</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${loginLink}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Login to Project1</a>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px;">For security reasons, we strongly recommend changing your password after your first login.</p>
+        <p style="margin-top: 30px;">Best wishes for your studies,<br/>The Project1 Team</p>
+      </div>
+    `,
+  }),
 };
