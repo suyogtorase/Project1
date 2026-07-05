@@ -46,7 +46,7 @@ export const getUserData = async(req, res)=> {
 
 export const updateProfile = async (req, res) => {
     try {
-        const { profilePic, bio, name, rollno, level } = req.body;
+        const { profilePic, bio, name } = req.body;
 
         const userId = req.user._id;
         const oldUser = await userModel.findById(userId);
@@ -57,14 +57,6 @@ export const updateProfile = async (req, res) => {
 
         if (bio !== undefined) {
             updateData.bio = bio.trim() || "";
-        }
-
-        if (rollno !== undefined) {
-            updateData.rollno = rollno.trim() || "";
-        }
-
-        if (level !== undefined) {
-            updateData.level = level.trim() || "";
         }
 
         if (profilePic) {
@@ -217,7 +209,7 @@ export const getClassrooms = async(req, res) => {
 
 export const addStudent = async (req, res) => {
     try {
-        const { name, email, rollno, level } = req.body;
+        const { name, email } = req.body;
         const user = req.user;
 
         if (!user || user.role !== "Administrator") {
@@ -249,9 +241,7 @@ export const addStudent = async (req, res) => {
             role: "Student",
             isVerifiedByAdmin: true,
             isAccountVerified: true, // We can assume email is correct since admin added it, or leave false if we want them to verify later.
-            institute: institute._id,
-            rollno: rollno || "",
-            level: level || ""
+            institute: institute._id
         });
 
         // Send Email
@@ -321,11 +311,59 @@ export const assignStudentToClassroom = async (req, res) => {
 
         classroom.students.push({ user: targetUserId });
         await classroom.save();
+        
+        targetUser.classrooms.push(classroomId);
+        await targetUser.save();
 
         res.json({ success: true, message: "Student assigned to classroom successfully" });
 
     } catch (error) {
         console.log("Error in assignStudentToClassroom, ", error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export const getInstituteStudents = async (req, res) => {
+    try {
+        const user = req.user;
+
+        if (!user || user.role !== "Administrator") {
+            return res.status(403).json({ success: false, message: "Only Administrators can view institute students" });
+        }
+
+        const institute = await instituteModel.findOne({ administrator: user._id, status: "Approved" });
+        if (!institute) {
+            return res.status(403).json({ success: false, message: "You don't have an approved institute yet" });
+        }
+
+        const students = await userModel.find({ institute: institute._id, role: "Student" }).select("-password");
+
+        res.json({ success: true, students });
+
+    } catch (error) {
+        console.log("Error in getInstituteStudents, ", error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export const getClassroomDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = req.user;
+
+        if (!user || user.role !== "Administrator") {
+            return res.status(403).json({ success: false, message: "Only Administrators can view classroom details" });
+        }
+
+        const classroom = await classroomModel.findById(id).populate('students.user', '-password');
+        if (!classroom) {
+            return res.status(404).json({ success: false, message: "Classroom not found" });
+        }
+
+        res.json({ success: true, classroom });
+
+    } catch (error) {
+        console.log("Error in getClassroomDetails, ", error);
         res.status(500).json({ success: false, message: error.message });
     }
 }

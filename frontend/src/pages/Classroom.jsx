@@ -69,9 +69,13 @@ const Classroom = () => {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {classrooms.map((cls) => (
-                            <div key={cls._id} className="bg-[#1a1a2e] border border-gray-800 rounded-xl p-6 hover:border-[#8b7cf6]/50 transition-all group">
+                            <div 
+                                key={cls._id} 
+                                onClick={() => userData?.role === 'Administrator' ? window.location.href = `/classroom/${cls._id}` : null}
+                                className={`bg-[#1a1a2e] border border-gray-800 rounded-xl p-6 transition-all group ${userData?.role === 'Administrator' ? 'cursor-pointer hover:border-[#8b7cf6]/50' : ''}`}
+                            >
                                 <div className="flex items-start justify-between mb-4">
-                                    <h3 className="text-xl font-bold text-white group-hover:text-[#8b7cf6] transition-colors">{cls.className}</h3>
+                                    <h3 className="text-xl font-bold text-white group-hover:text-[#8b7cf6] transition-colors">{cls.name || cls.className}</h3>
                                     <span className="px-3 py-1 bg-[#2a2a3e] rounded-full text-xs text-gray-300">{cls.level}</span>
                                 </div>
                                 <div className="space-y-2 mt-6">

@@ -15,8 +15,7 @@ const userSchema = new mongoose.Schema({
     profilePic: {type: String, default: ""},
     bio: {type: String},
     institute: {type: mongoose.Schema.Types.ObjectId, ref: "institute"},
-    rollno: {type: String, default: ""},
-    level: {type: String, default: ""},
+    classrooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "classroom" }],
 })
 
 const userModel = mongoose.models.user || mongoose.model('user', userSchema);

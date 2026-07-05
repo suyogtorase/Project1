@@ -59,6 +59,9 @@ export const userRegister = async (req, res) => {
         res.status(200).json({success: true, message: "User Registered successfully"});
         
     } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({success: false, message: "User with this email already exists."});
+        }
         console.log("Error in user register, ", error);
         res.status(500).json({success: false, message: "Internal server error"});
     }
@@ -345,6 +348,9 @@ export const googleLogin = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Google login successful" });
   } catch (error) {
+    if (error.code === 11000) {
+        return res.status(400).json({success: false, message: "Google login failed: Account with this email already exists."});
+    }
     console.error("Error in googleLogin:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
