@@ -94,7 +94,7 @@ const ClassroomDetails = () => {
                                 <tbody>
                                     {classroom.students.map((studentRecord) => (
                                         <tr key={studentRecord._id} className="hover:bg-[#2a2a3e]/50 transition-colors">
-                                            <td className="p-4 border border-gray-800 text-sm text-gray-300 flex items-center gap-2">
+                                            <td className="p-4 border border-gray-800 text-sm text-gray-300 items-center gap-2">
                                                 <span className="w-6 h-6 flex items-center justify-center bg-[#8b7cf6]/20 text-[#8b7cf6] rounded-full text-xs font-bold">
                                                     {studentRecord.rollno}
                                                 </span>

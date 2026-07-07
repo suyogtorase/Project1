@@ -193,6 +193,9 @@ export const getClassrooms = async(req, res) => {
             query.createdBy = user._id;
         } else if (user.institute) {
             query.institute = user.institute;
+            if (user.role === "Student") {
+                query['students.user'] = user._id;
+            }
         } else {
             return res.json({success: false, classrooms: []});
         }

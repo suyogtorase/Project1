@@ -48,7 +48,7 @@ const InstitutePanel = () => {
     const fetchClassrooms = async () => {
         try {
             axios.defaults.withCredentials = true;
-            const { data } = await axios.post(backendUrl + '/api/user/get-classrooms');
+            const { data } = await axios.get(backendUrl + '/api/user/get-classrooms');
             if (data.success) {
                 setClassrooms(data.classrooms);
             }
@@ -123,6 +123,7 @@ const InstitutePanel = () => {
                 setStudentEmail('');
                 setStudentRollNo('');
                 setStudentLevel('');
+                fetchInstituteStudents(); // Refresh students
             } else {
                 toast.error(data.message);
             }
@@ -311,7 +312,7 @@ const InstitutePanel = () => {
                                         required
                                         className="w-full px-3 py-2 bg-[#2a2a3e] border border-gray-600 rounded-lg text-white text-sm focus:border-[#8b7cf6] outline-none"
                                     />
-                                    {showStudentDropdown && assignStudentName && (
+                                    {showStudentDropdown && (
                                         <div className="absolute z-10 w-full mt-1 bg-[#2a2a3e] border border-gray-600 rounded-lg max-h-40 overflow-y-auto shadow-xl">
                                             {instituteStudents
                                                 .filter(s => s.name.toLowerCase().includes(assignStudentName.toLowerCase()))
