@@ -123,8 +123,8 @@ const Classroom = () => {
                                     {classrooms.map((cls) => (
                                         <div 
                                             key={cls._id} 
-                                            onClick={() => userData?.role === 'Administrator' ? navigate(`/classroom/${cls._id}`) : null}
-                                            className={`bg-[#1a1a2e] border border-gray-800 rounded-xl p-6 transition-all group ${userData?.role === 'Administrator' ? 'cursor-pointer hover:border-[#8b7cf6]/50 hover:shadow-lg hover:shadow-[#8b7cf6]/10 hover:-translate-y-1' : ''}`}
+                                            onClick={() => navigate(`/classroom/${cls._id}`)}
+                                            className="bg-[#1a1a2e] border border-gray-800 rounded-xl p-6 transition-all group cursor-pointer hover:border-[#8b7cf6]/50 hover:shadow-lg hover:shadow-[#8b7cf6]/10 hover:-translate-y-1"
                                         >
                                             <div className="flex items-start justify-between mb-4">
                                                 <h3 className="text-xl font-bold text-white group-hover:text-[#8b7cf6] transition-colors">{cls.name || cls.className}</h3>

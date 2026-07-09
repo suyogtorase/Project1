@@ -115,3 +115,89 @@ export const getAllImages = async(req, res) => {
         res.status(500).json({success: false, message: "Internal server error"})
     }
 }
+
+import classroomModel from "../models/classroomModel.js";
+import classroomMessageModel from "../models/classroomMessageModel.js";
+
+// get messages for a specific classroom
+export const getClassroomMessages = async (req, res) => {
+    try {
+        const { classroomId } = req.params;
+        const user = req.user;
+
+        const classroom = await classroomModel.findById(classroomId);
+        if (!classroom) {
+            return res.status(404).json({ success: false, message: "Classroom not found" });
+        }
+
+        // Authorization check
+        let isAuthorized = false;
+        if (user.role === "Administrator" && String(classroom.createdBy) === String(user._id)) {
+            isAuthorized = true;
+        } else if (user.role === "Teacher") {
+            isAuthorized = classroom.teachers.some(t => String(t) === String(user._id));
+        } else if (user.role === "Student") {
+            isAuthorized = classroom.students.some(s => String(s.user) === String(user._id));
+        }
+
+        if (!isAuthorized) {
+            return res.status(403).json({ success: false, message: "Unauthorized to view this classroom's messages" });
+        }
+
+        const messages = await classroomMessageModel.find({ classroomId })
+            .populate('senderId', 'name profilePic role')
+            .sort({ createdAt: 1 });
+
+        res.json({ success: true, messages });
+    } catch (error) {
+        console.log("Error in getClassroomMessages", error.message);
+        res.status(500).json({ success: false, message: "Internal server Error" });
+    }
+};
+
+// send a message to a classroom group
+export const sendClassroomMessage = async (req, res) => {
+    try {
+        const { text } = req.body;
+        const { classroomId } = req.params;
+        const user = req.user;
+
+        if (user.role === "Administrator") {
+            return res.status(403).json({ success: false, message: "Administrators cannot send messages in classrooms" });
+        }
+
+        const classroom = await classroomModel.findById(classroomId);
+        if (!classroom) {
+            return res.status(404).json({ success: false, message: "Classroom not found" });
+        }
+
+        // Authorization check to SEND
+        let isAuthorized = false;
+        if (user.role === "Teacher") {
+            isAuthorized = classroom.teachers.some(t => String(t) === String(user._id));
+        } else if (user.role === "Student") {
+            isAuthorized = classroom.students.some(s => String(s.user) === String(user._id));
+        }
+
+        if (!isAuthorized) {
+            return res.status(403).json({ success: false, message: "Unauthorized to send messages in this classroom" });
+        }
+
+        const newMessage = await classroomMessageModel.create({
+            senderId: user._id,
+            classroomId,
+            text
+        });
+
+        // Fetch the populated message to ensure it's sent correctly via socket
+        const populatedMessage = await classroomMessageModel.findById(newMessage._id).populate('senderId', 'name profilePic role');
+
+        // Emit to the classroom Socket.io room
+        io.to(classroomId).emit("newClassroomMessage", populatedMessage);
+
+        res.json({ success: true, newMessage: populatedMessage });
+    } catch (error) {
+        console.log("Error in sendClassroomMessage", error.message);
+        res.status(500).json({ success: false, message: "Internal server Error" });
+    }
+};

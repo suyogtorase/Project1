@@ -1,6 +1,6 @@
 import express from "express";
 import userAuth from "../middleware/userAuth.js";
-import { createClassroom, getClassrooms, getUserData, updateProfile, requestInstitute, assignUserToInstitute, addStudent, assignStudentToClassroom, getInstituteStudents, getClassroomDetails } from "../controllers/userController.js";
+import { createClassroom, getClassrooms, getUserData, updateProfile, requestInstitute, assignUserToInstitute, addStudent, assignStudentToClassroom, getInstituteStudents, getClassroomDetails, addTeacher, assignTeacherToClassroom, getInstituteTeachers } from "../controllers/userController.js";
 
 const userRouter = express.Router();
 
@@ -14,5 +14,9 @@ userRouter.post('/add-student', userAuth, addStudent);
 userRouter.post('/assign-student-classroom', userAuth, assignStudentToClassroom);
 userRouter.get('/get-institute-students', userAuth, getInstituteStudents);
 userRouter.get('/get-classroom/:id', userAuth, getClassroomDetails);
+
+userRouter.post('/add-teacher', userAuth, addTeacher);
+userRouter.post('/assign-teacher-classroom', userAuth, assignTeacherToClassroom);
+userRouter.get('/get-institute-teachers', userAuth, getInstituteTeachers);
 
 export default userRouter;

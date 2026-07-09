@@ -4,10 +4,11 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import EmailVerify from './pages/EmailVerify'
 import ResetPassword from './pages/ResetPassword'
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify'
 import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/AdminDashBoard'
 import ChatHome from './pages/ChatHome'
+import Groups from './pages/Groups'
 import ProfilePage from './pages/ProfilePage'
 import Classroom from './pages/Classroom'
 import ClassroomDetails from './pages/ClassroomDetails'
@@ -15,18 +16,19 @@ import ClassroomDetails from './pages/ClassroomDetails'
 const App = () => {
   return (
     <div>
-      <ToastContainer/>
+      <ToastContainer />
       <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/chat' element={<ChatHome/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/profile' element={<ProfilePage/>}/>
-        <Route path='/classroom' element={<Classroom/>}/>
-        <Route path='/classroom/:id' element={<ClassroomDetails/>}/>
-        <Route path='/email-verify' element={<EmailVerify/>}/>
-        <Route path='/reset-password' element={<ResetPassword/>}/>
-        <Route path='/admin-login' element={<AdminLogin/>}/>
-        <Route path='/admin/dashboard' element={<AdminDashboard/>}/>
+        <Route path='/' element={<Home />} />
+        <Route path='/chat' element={<ChatHome />} />
+        <Route path='/groups' element={<Groups />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/profile' element={<ProfilePage />} />
+        <Route path='/classroom' element={<Classroom />} />
+        <Route path='/classroom/:id' element={<ClassroomDetails />} />
+        <Route path='/email-verify' element={<EmailVerify />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
+        <Route path='/admin-login' element={<AdminLogin />} />
+        <Route path='/admin/dashboard' element={<AdminDashboard />} />
       </Routes>
     </div>
   )

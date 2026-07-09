@@ -19,6 +19,12 @@ const classroomSchema = new mongoose.Schema({
             }
         },
     ],
+    teachers: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "user",
+        }
+    ],
     institute: {type: mongoose.Schema.Types.ObjectId, ref: "institute"},
 
 }, {timestamps: true});
