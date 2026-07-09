@@ -68,4 +68,50 @@ export const emailTemplates = {
       </div>
     `,
   }),
+
+  // 5. Teacher Admission email
+  teacherAdmission: (userName, password, loginLink) => ({
+    subject: "Welcome to Project1 - Teacher Account Created 🎉",
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+        <h2 style="color: #4F46E5;">Welcome, ${userName || "Teacher"}!</h2>
+        <p>Your teacher account has been successfully created by your administrator on Project1.</p>
+        <p>Here are your login credentials:</p>
+        
+        <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; margin: 20px 0;">
+          <p style="margin: 0 0 10px 0;"><strong>Temporary Password:</strong> <code style="background-color: #e5e7eb; padding: 3px 6px; border-radius: 4px; font-size: 16px;">${password}</code></p>
+        </div>
+
+        <p>Please log in using your email address and the password provided above.</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${loginLink}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Login to Project1</a>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px;">For security reasons, we strongly recommend changing your password after your first login.</p>
+        <p style="margin-top: 30px;">Best regards,<br/>The Project1 Team</p>
+      </div>
+    `,
+  }),
+
+  // 6. Teacher Assessment email
+  teacherAssignment: (userName, className, classLevel) => ({
+    subject: "Classroom Assignment Update - Project1",
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+        <h2 style="color: #4F46E5;">Hello, ${userName || "Teacher"}!</h2>
+        <p>You have been assigned to a new classroom by your administrator.</p>
+        
+        <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; margin: 20px 0;">
+          <p style="margin: 0 0 10px 0;"><strong>Classroom Name:</strong> ${className}</p>
+          <p style="margin: 0;"><strong>Class Level:</strong> ${classLevel}</p>
+        </div>
+
+        <p>You can now log in to Project1 to view the classroom details and start managing it.</p>
+        
+        <p style="margin-top: 30px;">Best regards,<br/>The Project1 Team</p>
+      </div>
+    `,
+  }),
 };
+

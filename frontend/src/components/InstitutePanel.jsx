@@ -26,10 +26,20 @@ const InstitutePanel = () => {
     const [instituteStudents, setInstituteStudents] = useState([]);
     const [showStudentDropdown, setShowStudentDropdown] = useState(false);
 
+    // New states for Teachers
+    const [teacherName, setTeacherName] = useState('');
+    const [teacherEmail, setTeacherEmail] = useState('');
+    const [assignTeacherId, setAssignTeacherId] = useState('');
+    const [assignTeacherName, setAssignTeacherName] = useState('');
+    const [assignTeacherClassroomId, setAssignTeacherClassroomId] = useState('');
+    const [instituteTeachers, setInstituteTeachers] = useState([]);
+    const [showTeacherDropdown, setShowTeacherDropdown] = useState(false);
+
     useEffect(() => {
         if (userData?.role === 'Administrator' && userData?.isVerifiedByAdmin) {
             fetchClassrooms();
             fetchInstituteStudents();
+            fetchInstituteTeachers();
         }
     }, [userData]);
     
@@ -42,6 +52,18 @@ const InstitutePanel = () => {
             }
         } catch (error) {
             console.error("Error fetching institute students:", error);
+        }
+    };
+
+    const fetchInstituteTeachers = async () => {
+        try {
+            axios.defaults.withCredentials = true;
+            const { data } = await axios.get(backendUrl + '/api/user/get-institute-teachers');
+            if (data.success) {
+                setInstituteTeachers(data.teachers);
+            }
+        } catch (error) {
+            console.error("Error fetching institute teachers:", error);
         }
     };
 
@@ -150,6 +172,48 @@ const InstitutePanel = () => {
             }
         } catch (error) {
             toast.error(error.response?.data?.message || 'Error assigning student to classroom');
+        }
+    };
+
+    const handleAddTeacher = async (e) => {
+        e.preventDefault();
+        try {
+            axios.defaults.withCredentials = true;
+            const { data } = await axios.post(backendUrl + '/api/user/add-teacher', {
+                name: teacherName,
+                email: teacherEmail
+            });
+            if (data.success) {
+                toast.success('Teacher added successfully. Email sent with credentials.');
+                setTeacherName('');
+                setTeacherEmail('');
+                fetchInstituteTeachers();
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Error adding teacher');
+        }
+    };
+
+    const handleAssignTeacherToClassroom = async (e) => {
+        e.preventDefault();
+        try {
+            axios.defaults.withCredentials = true;
+            const { data } = await axios.post(backendUrl + '/api/user/assign-teacher-classroom', {
+                targetUserId: assignTeacherId,
+                classroomId: assignTeacherClassroomId
+            });
+            if (data.success) {
+                toast.success('Teacher assigned to classroom successfully');
+                setAssignTeacherId('');
+                setAssignTeacherName('');
+                setAssignTeacherClassroomId('');
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Error assigning teacher to classroom');
         }
     };
 
@@ -350,6 +414,99 @@ const InstitutePanel = () => {
                                 </select>
                                 <button type="submit" className="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg text-sm font-medium hover:opacity-90">
                                     Assign to Classroom
+                                </button>
+                            </form>
+                        </div>
+
+                        {/* Add New Teacher */}
+                        <div className="p-4 bg-[#1a1a2e] rounded-lg border border-gray-700">
+                            <form onSubmit={handleAddTeacher} className="space-y-3">
+                                <h4 className="text-sm font-semibold text-white flex items-center gap-2 mb-3">
+                                    <UserPlus className="h-4 w-4 text-[#8b7cf6]" /> Add New Teacher
+                                </h4>
+                                <p className="text-xs text-gray-400 mb-2">Create a new teacher account. They will receive an email with their login credentials.</p>
+                                <div className="space-y-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Full Name"
+                                        value={teacherName}
+                                        onChange={(e) => setTeacherName(e.target.value)}
+                                        required
+                                        className="w-full px-3 py-2 bg-[#2a2a3e] border border-gray-600 rounded-lg text-white text-sm focus:border-[#8b7cf6] outline-none"
+                                    />
+                                    <input
+                                        type="email"
+                                        placeholder="Email Address"
+                                        value={teacherEmail}
+                                        onChange={(e) => setTeacherEmail(e.target.value)}
+                                        required
+                                        className="w-full px-3 py-2 bg-[#2a2a3e] border border-gray-600 rounded-lg text-white text-sm focus:border-[#8b7cf6] outline-none"
+                                    />
+                                </div>
+                                <button type="submit" className="w-full py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg text-sm font-medium hover:opacity-90">
+                                    Add Teacher
+                                </button>
+                            </form>
+                        </div>
+
+                        {/* Assign Teacher to Classroom */}
+                        <div className="p-4 bg-[#1a1a2e] rounded-lg border border-gray-700">
+                            <form onSubmit={handleAssignTeacherToClassroom} className="space-y-3">
+                                <h4 className="text-sm font-semibold text-white flex items-center gap-2 mb-3">
+                                    <BookOpen className="h-4 w-4 text-[#8b7cf6]" /> Assign Teacher to Classroom
+                                </h4>
+                                <p className="text-xs text-gray-400 mb-2">Assign an existing teacher to a classroom.</p>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        placeholder="Type teacher name..."
+                                        value={assignTeacherName}
+                                        onChange={(e) => {
+                                            setAssignTeacherName(e.target.value);
+                                            setAssignTeacherId('');
+                                            setShowTeacherDropdown(true);
+                                        }}
+                                        onFocus={() => setShowTeacherDropdown(true)}
+                                        required
+                                        className="w-full px-3 py-2 bg-[#2a2a3e] border border-gray-600 rounded-lg text-white text-sm focus:border-[#8b7cf6] outline-none"
+                                    />
+                                    {showTeacherDropdown && (
+                                        <div className="absolute z-10 w-full mt-1 bg-[#2a2a3e] border border-gray-600 rounded-lg max-h-40 overflow-y-auto shadow-xl">
+                                            {instituteTeachers
+                                                .filter(t => t.name.toLowerCase().includes(assignTeacherName.toLowerCase()))
+                                                .map(teacher => (
+                                                    <div 
+                                                        key={teacher._id} 
+                                                        className="px-3 py-2 text-sm text-white hover:bg-[#8b7cf6] cursor-pointer"
+                                                        onMouseDown={(e) => {
+                                                            e.preventDefault();
+                                                            setAssignTeacherName(teacher.name);
+                                                            setAssignTeacherId(teacher._id);
+                                                            setShowTeacherDropdown(false);
+                                                        }}
+                                                    >
+                                                        {teacher.name} <span className="text-gray-400 text-xs ml-1">({teacher.email})</span>
+                                                    </div>
+                                                ))}
+                                            {instituteTeachers.filter(t => t.name.toLowerCase().includes(assignTeacherName.toLowerCase())).length === 0 && (
+                                                <div className="px-3 py-2 text-sm text-gray-400">No matching teachers found</div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                <select
+                                    value={assignTeacherClassroomId}
+                                    onChange={(e) => setAssignTeacherClassroomId(e.target.value)}
+                                    required
+                                    className="w-full px-3 py-2 bg-[#2a2a3e] border border-gray-600 rounded-lg text-white text-sm focus:border-[#8b7cf6] outline-none"
+                                >
+                                    <option value="" disabled>Select a Classroom</option>
+                                    {classrooms.map((cls) => (
+                                        <option key={cls._id} value={cls._id}>{cls.name} ({cls.level})</option>
+                                    ))}
+                                </select>
+                                <button type="submit" className="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg text-sm font-medium hover:opacity-90">
+                                    Assign Teacher
                                 </button>
                             </form>
                         </div>

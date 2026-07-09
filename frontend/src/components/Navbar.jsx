@@ -154,7 +154,7 @@ const Navbar = () => {
     { name: 'Home', path: '/', icon: <Home className="h-4 w-4" /> },
     { name: 'Classroom', path: '/classroom', icon: <BookOpen className="h-4 w-4" /> },
     { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="h-4 w-4" /> },
-    { name: 'Chat', path: '/chat', icon: <MessageSquare className="h-4 w-4" /> },
+    { name: 'Groups', path: '/groups', icon: <Users className="h-4 w-4" /> },
     { name: 'Leaderboard', path: '/leaderboard', icon: <Trophy className="h-4 w-4" /> },
   ]
 
@@ -263,13 +263,13 @@ const Navbar = () => {
 
                       <button
                         onClick={() => {
-                          navigate('/chat')
+                          navigate('/groups')
                           setIsUserMenuOpen(false)
                         }}
                         className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-[#2a2a3e] hover:text-white transition-colors"
                       >
-                        <MessageSquare className="h-5 w-5" />
-                        AI Chat
+                        <Users className="h-5 w-5" />
+                        Groups
                       </button>
 
                       {!userData.userVerified && (

@@ -41,6 +41,17 @@ io.on("connection", (socket)=>{
     // emit online users to all connected users
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
+    // Classroom Group Chat Rooms
+    socket.on("joinClassroom", (classroomId) => {
+        socket.join(classroomId);
+        console.log(`User ${userId} joined room: ${classroomId}`);
+    });
+
+    socket.on("leaveClassroom", (classroomId) => {
+        socket.leave(classroomId);
+        console.log(`User ${userId} left room: ${classroomId}`);
+    });
+
     socket.on("disconnect", ()=>{
         console.log("User Disconnected, ", userId);
         delete userSocketMap[userId];
