@@ -10,10 +10,10 @@ const ClassroomDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { backendUrl, userData, socket } = useContext(AppContent);
-    
+
     const [classroom, setClassroom] = useState(null);
     const [loading, setLoading] = useState(true);
-    
+
     useEffect(() => {
         if (userData) {
             fetchClassroomDetails();
@@ -54,7 +54,7 @@ const ClassroomDetails = () => {
     const createdDate = classroom.createdAt
         ? new Date(classroom.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
         : '—';
-    
+
     const canSendMessages = userData?.role === 'Student' || userData?.role === 'Teacher';
 
     return (
@@ -62,9 +62,6 @@ const ClassroomDetails = () => {
             <Navbar />
 
             <div className="flex flex-1 pt-20 h-screen">
-                <div className="fixed inset-0 pointer-events-none z-0">
-                    <div className="absolute top-20 right-1/4 w-96 h-96 bg-gray-100 rounded-full filter  " />
-                </div>
 
                 {/* ───── LEFT SIDEBAR ───── */}
                 <div className="w-72 flex-shrink-0 bg-white border-r border-gray-200 h-full sticky top-20 z-20 flex flex-col">
@@ -158,7 +155,7 @@ const ClassroomDetails = () => {
                 {/* ───── MAIN CONTENT ───── */}
                 <div className="flex-1 h-full overflow-y-auto relative z-10 p-6 md:p-12 pb-20">
                     <div className="max-w-5xl mx-auto space-y-8">
-                        
+
                         {/* Assigned Teachers Section */}
                         <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 border-b border-gray-300 pb-4">

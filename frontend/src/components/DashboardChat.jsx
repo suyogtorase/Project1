@@ -8,7 +8,7 @@ const DashboardChat = ({ classrooms }) => {
     const { backendUrl, userData, socket } = useContext(AppContent);
     const [selectedGroup, setSelectedGroup] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
-    
+
     // Chat state
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
@@ -113,7 +113,7 @@ const DashboardChat = ({ classrooms }) => {
             setSending(false);
         }
     };
-    
+
     const canSendMessages = userData?.role === 'Student' || userData?.role === 'Teacher';
     const filteredClassrooms = classrooms.filter(cls => cls.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -122,25 +122,25 @@ const DashboardChat = ({ classrooms }) => {
             {/* Left Sidebar - Groups List */}
             <div className={`w-full md:w-[320px] lg:w-[380px] flex-shrink-0 bg-white border border-gray-200 rounded-3xl flex flex-col overflow-hidden shadow-xl transition-all duration-300
                             ${selectedGroup ? 'hidden md:flex' : 'flex'}`}>
-                
+
                 <div className="p-6 border-b border-gray-200 shrink-0 bg-gray-50">
                     <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                         <Users className="h-6 w-6 text-gray-900" />
                         Classrooms
                     </h2>
-                    
+
                     <div className="mt-4 relative group">
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search classrooms..." 
+                            placeholder="Search classrooms..."
                             className="w-full bg-white border border-gray-300 text-sm rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-all text-gray-800 placeholder-gray-500"
                         />
                         <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-gray-500 group-focus-within:text-gray-900 transition-colors" />
                     </div>
                 </div>
-                
+
                 <div className="flex-1 overflow-y-auto p-4 space-y-2">
                     {filteredClassrooms.length === 0 ? (
                         <div className="text-center py-10 flex flex-col items-center justify-center h-full text-gray-500">
@@ -151,18 +151,16 @@ const DashboardChat = ({ classrooms }) => {
                         </div>
                     ) : (
                         filteredClassrooms.map(cls => (
-                            <button 
+                            <button
                                 key={cls._id}
                                 onClick={() => setSelectedGroup(cls)}
-                                className={`w-full flex items-center gap-4 p-3 rounded-xl transition-all duration-200 border ${
-                                    selectedGroup?._id === cls._id 
-                                        ? 'bg-gray-100 border-gray-300 shadow-sm' 
+                                className={`w-full flex items-center gap-4 p-3 rounded-xl transition-all duration-200 border ${selectedGroup?._id === cls._id
+                                        ? 'bg-gray-100 border-gray-300 shadow-sm'
                                         : 'bg-white border-transparent hover:bg-gray-50 hover:border-gray-200'
-                                }`}
+                                    }`}
                             >
-                                <div className={`w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-white font-bold transition-transform duration-300 ${
-                                    selectedGroup?._id === cls._id ? 'bg-gray-900' : 'bg-gray-400'
-                                }`}>
+                                <div className={`w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-white font-bold transition-transform duration-300 ${selectedGroup?._id === cls._id ? 'bg-gray-900' : 'bg-gray-400'
+                                    }`}>
                                     {cls.name.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="flex-1 min-w-0 text-left">
@@ -187,13 +185,13 @@ const DashboardChat = ({ classrooms }) => {
             {/* Chat Area */}
             <div className={`flex-1 bg-white border border-gray-200 rounded-3xl flex flex-col shadow-xl overflow-hidden relative
                             ${!selectedGroup ? 'hidden md:flex' : 'flex'}`}>
-                
+
                 {selectedGroup ? (
                     <>
                         {/* Chat Header */}
                         <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-gray-50 shrink-0">
                             <div className="flex items-center gap-3">
-                                <button 
+                                <button
                                     onClick={() => setSelectedGroup(null)}
                                     className="md:hidden p-1.5 -ml-1 text-gray-500 hover:text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
                                 >
@@ -223,22 +221,22 @@ const DashboardChat = ({ classrooms }) => {
                                 messages.map((msg, idx) => {
                                     const isMe = msg.senderId?._id === userData?.userId;
                                     const isTeacherMessage = !isMe && msg.senderId?.role === 'Teacher';
-                                    
+
                                     return (
                                         <div key={msg._id || idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                                             {!isMe && (
                                                 <span className="text-[10px] text-gray-500 mb-1 flex items-center gap-1.5 ml-1">
-                                                    {msg.senderId?.name} 
+                                                    {msg.senderId?.name}
                                                     <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider uppercase border ${isTeacherMessage ? 'bg-gray-900 text-white border-gray-900' : 'bg-gray-200 text-gray-600 border-gray-300'}`}>
                                                         {msg.senderId?.role || 'Student'}
                                                     </span>
                                                 </span>
                                             )}
-                                            
+
                                             <div className="flex items-end gap-2 max-w-[85%] md:max-w-[75%]">
                                                 <div className={`px-4 py-2.5 shadow-sm text-sm
-                                                    ${isMe 
-                                                        ? 'bg-gray-900 text-white rounded-2xl rounded-tr-sm' 
+                                                    ${isMe
+                                                        ? 'bg-gray-900 text-white rounded-2xl rounded-tr-sm'
                                                         : isTeacherMessage
                                                             ? 'bg-white text-gray-900 rounded-2xl rounded-tl-sm border-2 border-gray-900/10'
                                                             : 'bg-white text-gray-800 rounded-2xl rounded-tl-sm border border-gray-200'
@@ -255,7 +253,7 @@ const DashboardChat = ({ classrooms }) => {
                                                     )}
                                                 </div>
                                             </div>
-                                            
+
                                             <div className={`text-[10px] text-gray-400 mt-1 font-medium ${isMe ? 'mr-1' : 'ml-1'}`}>
                                                 {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </div>

@@ -1,42 +1,3 @@
-// import React, { useContext } from 'react'
-// import { assets } from '../assets/assets'
-// import { AppContent } from '../context/AppContext'
-
-// const Header = () => {
-
-//     const {userData} = useContext(AppContent)
-
-//     return (
-//         <div className='flex flex-col items-center mt-20 px-4 text-gray-900enter text-gray-800'>
-//             <img src={assets.robo_gif} alt=""
-//                 className='w-72 h-72 rounded-full mb-6' />
-
-//             <h1
-//                 className='flex items-center gap-2 text-xl sm:text-3xl font-medium mb-2'>
-//                 Hey {userData ? userData.name : 'Developer'}!
-//                 <img className='w-8 aspect-square' src={assets.hand_wave} alt="" />
-//             </h1>
-
-//             <h2
-//                 className='text-3xl sm:text-5xl font-semibold mb-4'>
-//                 Welcome to My Website
-//             </h2>
-
-//             <p
-//                 className='mb-8 max-w-md'>
-//                 Let's start with a quick product tour and we will have you up and running in no time!
-//             </p>
-
-//             <button
-//                 className='border border-gray-500 rounded-full px-8 py-2.5 hover:bg-gray-100 transition-all'>
-//                 Get Started
-//             </button>
-//         </div>
-//     )
-// }
-
-// export default Header
-
 import React, { useContext, useEffect, useState } from 'react'
 import { assets } from '../assets/assets'
 import { AppContent } from '../context/AppContext'
@@ -56,16 +17,16 @@ const Header = () => {
 
   return (
     <div className='relative overflow-hidden bg-gray-50 pt-32 pb-20 w-full'>
-      
+
       {/* Animated Background Gradients */}
       <div className="absolute inset-0">
-        <div 
+        <div
           className="absolute top-20 left-1/4 w-96 h-96  rounded-full filter  "
           style={{
             transform: `translate(${mousePosition.x * 0.01}px, ${mousePosition.y * 0.01}px)`
           }}
         />
-        <div 
+        <div
           className="absolute bottom-20 right-1/4 w-96 h-96  rounded-full filter  "
           style={{
             animation: 'pulse 3s ease-in-out infinite',
@@ -75,23 +36,14 @@ const Header = () => {
       </div>
 
       <div className='relative flex flex-col items-center px-4 sm:px-6 text-gray-900enter w-full max-w-7xl mx-auto'>
-        
-        {/* Status Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 backdrop-blur-sm rounded-full border border-gray-900/20 text-gray-900lue-600 text-sm font-medium mb-8 animate-in slide-in-from-top">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-900 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-gray-900"></span>
-          </span>
-          AI-Powered Learning Platform
-        </div>
 
         {/* Robot Image with Glow Effect */}
         <div className="relative mb-8 group">
           <div className="absolute inset-0 bg-gray-900/30 rounded-full blur-2xl group-hover:bg-gray-900/40 transition-all duration-300" />
-          <img 
-            src={assets.robo_gif} 
+          <img
+            src={assets.robo_gif}
             alt="AI Mentor"
-            className='relative w-72 h-72 rounded-full shadow-2xl border-4 border-gray-900/20 group-hover:scale-105 transition-transform duration-300' 
+            className='relative w-72 h-72 rounded-full shadow-2xl border-4 border-gray-900/20 group-hover:scale-105 transition-transform duration-300'
           />
           {/* Floating Icons */}
           <div className="absolute -top-4 -right-4 bg-gray-100 border border-gray-900/30 text-gray-900 p-3 rounded-xl shadow-xl animate-bounce">
@@ -119,7 +71,7 @@ const Header = () => {
 
         {/* Description */}
         <p className='mb-10 max-w-2xl text-xl text-gray-700 leading-relaxed animate-in slide-in-from-bottom animation-delay-600'>
-          Personalized lessons that adapt to each student's performance, pace, and skill level. 
+          Personalized lessons that adapt to each student's performance, pace, and skill level.
           Empowering every learner with quality education.
         </p>
 

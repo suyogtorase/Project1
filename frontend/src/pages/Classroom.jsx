@@ -6,6 +6,7 @@ import { BookOpen, FileText, Calendar, Building, LayoutDashboard, Home, MessageS
 import InstitutePanel from '../components/InstitutePanel';
 import { useNavigate } from 'react-router-dom';
 import DashboardChat from '../components/DashboardChat';
+import ScheduleTab from '../components/ScheduleTab';
 
 const Classroom = () => {
     const { backendUrl, userData } = useContext(AppContent);
@@ -348,31 +349,14 @@ const Classroom = () => {
                     )}
 
                     {activeTab === 'schedule' && (
-                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 h-full">
                             <div className="mb-8 flex items-center gap-3">
                                 <Calendar className="h-8 w-8 text-gray-900" />
                                 <h1 className="text-3xl font-bold text-gray-900">
                                     Schedule
                                 </h1>
                             </div>
-                            <div className="text-center py-32 bg-white border border-gray-200 rounded-2xl shadow-lg relative overflow-hidden">
-                                <div className="absolute inset-0 flex items-center justify-center opacity-5">
-                                    <Calendar className="w-96 h-96" />
-                                </div>
-                                <div className="relative z-10">
-                                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-900/30">
-                                        <Calendar className="h-10 w-10 text-gray-900" />
-                                    </div>
-                                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Scheduling Module</h2>
-                                    <p className="text-gray-500 max-w-md mx-auto">
-                                        Timetables, live classes calendar, and scheduling features are currently under development.
-                                    </p>
-                                    <div className="mt-8 inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gray-100 border border-gray-300 text-gray-700 font-medium">
-                                        <div className="w-2 h-2 rounded-full bg-yellow-500 "></div>
-                                        Coming Soon
-                                    </div>
-                                </div>
-                            </div>
+                            <ScheduleTab classrooms={classrooms} />
                         </div>
                     )}
                 </div>

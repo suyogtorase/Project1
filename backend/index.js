@@ -13,6 +13,8 @@ import adminRouter from "./routes/adminRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
 import testRouter from "./routes/testRoutes.js";
 import announcementRouter from "./routes/announcementRoutes.js";
+import scheduleRouter from "./routes/scheduleRoutes.js";
+import startScheduleCleanupJob from "./jobs/scheduleCleanup.js";
 
 // create express app and server
 const app = express();
@@ -76,6 +78,10 @@ app.use('/api/admin', adminRouter)
 app.use('/api/messages', messageRouter)
 app.use('/api/tests', testRouter)
 app.use('/api/announcements', announcementRouter)
+app.use('/api/schedule', scheduleRouter)
+
+// Start cron jobs
+startScheduleCleanupJob();
 
 server.listen(port, ()=>{
     console.log(`Server running on http://localhost:${port}`);

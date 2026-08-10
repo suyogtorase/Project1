@@ -97,7 +97,7 @@ const ProfilePage = () => {
 
             {/* Back Button */}
             <button
-                onClick={() => navigate('/chat')}
+                onClick={() => navigate('/')}
                 className="absolute left-6 top-6 flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors group z-10"
             >
                 <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />

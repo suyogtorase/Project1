@@ -202,7 +202,7 @@ export const getClassrooms = async(req, res) => {
             return res.json({success: false, classrooms: []});
         }
         
-        const classrooms = await classroomModel.find(query);
+        const classrooms = await classroomModel.find(query).populate('teachers', 'name email');
         
         res.json({success: true, classrooms});
         

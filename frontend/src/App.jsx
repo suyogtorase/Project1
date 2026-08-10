@@ -24,7 +24,6 @@ const App = () => {
       <ToastContainer />
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/chat' element={<ChatHome />} />
         <Route path='/groups' element={<Groups />} />
         <Route path='/announcements' element={<Announcements />} />
         <Route path='/login' element={<Login />} />

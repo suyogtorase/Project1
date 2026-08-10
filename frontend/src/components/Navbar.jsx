@@ -1,99 +1,15 @@
-// import React, { useContext } from 'react'
-// import { assets } from '../assets/assets'
-// import { useNavigate } from 'react-router-dom'
-// import { AppContent } from '../context/AppContext'
-// import axios from 'axios'
-// import { toast } from 'react-toastify'
-
-// const Navbar = () => {
-//   const navigate = useNavigate()
-//   const { userData, backendUrl, setUserData, setIsLoggedIn } = useContext(AppContent)
-
-//   const logout = async () => {
-//     try {
-//       const { data } = await axios.post(backendUrl + '/api/auth/logout', {
-//         withCredentials: true,
-//       })
-
-//       if (data.success) {
-//         setIsLoggedIn(false);
-//         setUserData(false);
-//         navigate('/')
-//       }
-//     } catch (error) {
-//       toast.error(error.message)
-//     }
-//   }
-
-//   const sendVerificationOtp = async() => {
-//     try {
-//       axios.defaults.withCredentials = true
-
-//       const { data } = await axios.get(backendUrl + '/api/auth/send-verify-otp')
-
-//       if(data.success){
-//         navigate('/email-verify')
-//         toast.success(data.message)
-//       }
-//       else{
-//         toast.error(data.message)
-//       }
-
-//     } catch (error) {
-//       toast.error(error.message)
-//     }
-//   }
-
-//   return (
-//     <div className='w-full flex justify-between items-center p-4 sm:p-6 sm:px-24 absolute top-0'>
-
-//       <img src={assets.logo} alt="" className='w-28 sm:w-32' />
-
-//       {userData ?
-//         <div className='w-8 h-8 flex justify-center items-center rounded-full bg-black text-gray-900 relative group'>
-//           {userData.name[0].toUpperCase()}
-//           <div className='absolute hidden group-hover:block top-0 right-0 z-10 text-gray-900lack rounded pt-10'>
-
-//             <ul className='list-none m-0 p-2 bg-gray-100 text-sm'>
-//               {!userData.userVerified &&
-//                 <li onClick={sendVerificationOtp} className='px-1 py-2 hover:bg-gray-200 cursor-pointer'>Verify Email</li>
-//               }
-
-//               <li onClick={logout} className='px-1 py-2 hover:bg-gray-200 cursor-pointer pr-10'>Logout</li>
-//             </ul>
-
-//           </div>
-//         </div> :
-//         <button
-//           className='flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2 text-gray-800 hover:bg-gray-100 transition-all'
-//           onClick={() => navigate('/login')}
-//         >
-//           Login
-//           <img src={assets.arrow_icon} alt="" />
-//         </button>
-//       }
-
-
-
-//     </div>
-//   )
-// }
-
-// export default Navbar
-
 import React, { useContext, useState, useEffect } from 'react'
-import { assets } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
 import { AppContent } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { 
-  MessageCircle, 
-  Menu, 
-  X, 
-  BookOpen, 
-  User, 
-  MessageSquare, 
+import {
+  MessageCircle,
+  Menu,
+  X,
+  BookOpen,
+  User,
+  MessageSquare,
   LayoutDashboard,
   LogOut,
   Mail,
@@ -153,21 +69,20 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', path: '/', icon: <Home className="h-4 w-4" /> },
-    { name: 'Classroom', path: '/classroom', icon: <BookOpen className="h-4 w-4" /> },
+    { name: 'Dashboard', path: '/classroom', icon: <BookOpen className="h-4 w-4" /> },
     { name: 'Announcements', path: '/announcements', icon: <Megaphone className="h-4 w-4" /> },
     { name: 'Groups', path: '/groups', icon: <Users className="h-4 w-4" /> },
     { name: 'Leaderboard', path: '/leaderboard', icon: <Trophy className="h-4 w-4" /> },
   ]
 
   return (
-    <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-white/95  shadow-2xl' : 'bg-white'
-    }`}>
+    <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95  shadow-2xl' : 'bg-white'
+      }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full">
         <div className="flex justify-between items-center h-20">
-          
+
           {/* Logo */}
-          <div 
+          <div
             className="flex items-center gap-3 group cursor-pointer"
             onClick={() => navigate("/")}
           >
@@ -315,7 +230,7 @@ const Navbar = () => {
             )}
 
             {/* Mobile Menu Toggle */}
-            <button 
+            <button
               className="md:hidden p-2 text-gray-900"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
