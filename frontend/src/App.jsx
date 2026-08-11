@@ -7,7 +7,6 @@ import ResetPassword from './pages/ResetPassword'
 import { ToastContainer } from 'react-toastify'
 import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/AdminDashBoard'
-import ChatHome from './pages/ChatHome'
 import Groups from './pages/Groups'
 import ProfilePage from './pages/ProfilePage'
 import Classroom from './pages/Classroom'
@@ -17,6 +16,7 @@ import TestTaker from './pages/TestTaker'
 import TestResults from './pages/TestResults'
 import Announcements from './pages/Announcements'
 import OfflineMarksEntry from './pages/OfflineMarksEntry'
+import LiveClassroom from './pages/LiveClassroom'
 
 const App = () => {
   return (
@@ -34,6 +34,7 @@ const App = () => {
         <Route path='/classroom/:id/tests/:testId/take' element={<TestTaker />} />
         <Route path='/classroom/:id/tests/:testId/results' element={<TestResults />} />
         <Route path='/classroom/:id/tests/:testId/offline-marks' element={<OfflineMarksEntry />} />
+        <Route path='/classroom/:id/live' element={<LiveClassroom />} />
         <Route path='/email-verify' element={<EmailVerify />} />
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/admin-login' element={<AdminLogin />} />

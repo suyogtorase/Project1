@@ -27,6 +27,11 @@ const scheduleSchema = new mongoose.Schema({
     subject: {
         type: String,
         default: ""
+    },
+    mode: {
+        type: String,
+        enum: ["Offline", "Online"],
+        default: "Offline"
     }
 }, {timestamps: true});
 

@@ -13,14 +13,28 @@ const ClassroomDetails = () => {
 
     const [classroom, setClassroom] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isLive, setIsLive] = useState(false);
 
     useEffect(() => {
         if (userData) {
             fetchClassroomDetails();
+            fetchActiveStatus();
         }
     }, [userData, id]);
 
 
+
+    const fetchActiveStatus = async () => {
+        try {
+            axios.defaults.withCredentials = true;
+            const { data } = await axios.get(`${backendUrl}/api/schedule/classroom/${id}/active`);
+            if (data.success) {
+                setIsLive(data.isActive);
+            }
+        } catch (error) {
+            console.error('Failed to fetch active schedule status', error);
+        }
+    };
 
     const fetchClassroomDetails = async () => {
         try {
@@ -141,7 +155,16 @@ const ClassroomDetails = () => {
                         </div>
                     </div>
 
-                    <div className="px-5 py-4 border-t border-gray-200">
+                    <div className="px-5 py-4 border-t border-gray-200 space-y-2">
+                        {isLive && (
+                            <button
+                                onClick={() => navigate(`/classroom/${id}/live`)}
+                                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gray-900 text-white hover:bg-black transition-all duration-200 font-medium shadow-md hover:shadow-lg"
+                            >
+                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                                <span>Join Live Class</span>
+                            </button>
+                        )}
                         <button
                             onClick={() => navigate('/')}
                             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 border border-transparent hover:bg-gray-100 hover:text-gray-900 transition-all duration-200"

@@ -16,6 +16,7 @@ const ScheduleTab = ({ classrooms }) => {
     const [subject, setSubject] = useState('');
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
+    const [mode, setMode] = useState('Offline');
     
     // Available teachers for selected classroom
     const [availableTeachers, setAvailableTeachers] = useState([]);
@@ -65,7 +66,8 @@ const ScheduleTab = ({ classrooms }) => {
                 teacherId: selectedTeacher,
                 subject,
                 startTime,
-                endTime
+                endTime,
+                mode
             });
             
             if (data.success) {
@@ -74,6 +76,7 @@ const ScheduleTab = ({ classrooms }) => {
                 setSubject('');
                 setStartTime('');
                 setEndTime('');
+                setMode('Offline');
                 fetchSchedules(); // Refresh the list
             } else {
                 toast.error(data.message);
@@ -157,6 +160,18 @@ const ScheduleTab = ({ classrooms }) => {
                                 />
                             </div>
 
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Mode</label>
+                                <select 
+                                    value={mode} 
+                                    onChange={(e) => setMode(e.target.value)}
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-gray-900"
+                                >
+                                    <option value="Offline">Offline</option>
+                                    <option value="Online">Online</option>
+                                </select>
+                            </div>
+
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
                                 <input 
@@ -216,16 +231,35 @@ const ScheduleTab = ({ classrooms }) => {
                                     <Clock className="w-4 h-4 text-gray-400" />
                                     <span>{getTimeOnly(schedule.startTime)} - {getTimeOnly(schedule.endTime)}</span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <BookOpen className="w-4 h-4 text-gray-400" />
-                                    <span>{schedule.classroom?.name} ({schedule.classroom?.level})</span>
-                                </div>
-                                {userData?.role !== 'Teacher' && schedule.teacher && (
-                                    <div className="flex items-center gap-2">
-                                        <Users className="w-4 h-4 text-gray-400" />
-                                        <span>Teacher: {schedule.teacher.name || "Assigned"}</span>
+                                
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-indigo-50 rounded-lg">
+                                            <BookOpen className="w-4 h-4 text-indigo-600" />
+                                        </div>
+                                        <div className="min-w-0 flex-1 flex justify-between items-center">
+                                            <div>
+                                                <p className="text-xs text-gray-500">Subject/Topic</p>
+                                                <p className="text-sm font-medium text-gray-900 truncate">
+                                                    {schedule.subject || "No topic specified"}
+                                                </p>
+                                            </div>
+                                            <div className={`text-xs px-2 py-1 rounded-md font-semibold ${schedule.mode === 'Online' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
+                                                {schedule.mode || 'Offline'}
+                                            </div>
+                                        </div>
                                     </div>
-                                )}
+                                    
+                                    <div className="flex items-center gap-2">
+                                        <div className="p-2 bg-gray-50 rounded-lg">
+                                            <Users className="w-4 h-4 text-gray-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">Classroom</p>
+                                            <p className="text-sm text-gray-900">{schedule.classroom?.name} ({schedule.classroom?.level})</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}

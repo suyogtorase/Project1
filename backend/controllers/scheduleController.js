@@ -5,7 +5,7 @@ import userModel from "../models/userModel.js";
 // Create a new schedule (Admin Only)
 export const createSchedule = async (req, res) => {
     try {
-        const { classroomId, teacherId, startTime, endTime, subject } = req.body;
+        const { classroomId, teacherId, startTime, endTime, subject, mode } = req.body;
 
         // 1. Verify User is Admin and get Institute
         const adminUser = await userModel.findById(req.user._id);
@@ -40,7 +40,8 @@ export const createSchedule = async (req, res) => {
             institute: instituteId,
             startTime: new Date(startTime),
             endTime: new Date(endTime),
-            subject: subject || ""
+            subject: subject || "",
+            mode: mode || "Offline"
         });
 
         await schedule.save();
@@ -109,6 +110,29 @@ export const getSchedules = async (req, res) => {
             schedules
         });
 
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+};
+
+// Check if there is an active online class for a classroom right now
+export const getActiveOnlineClass = async (req, res) => {
+    try {
+        const { id: classroomId } = req.params;
+        const now = new Date();
+
+        const activeSchedule = await scheduleModel.findOne({
+            classroom: classroomId,
+            mode: "Online",
+            startTime: { $lte: now },
+            endTime: { $gte: now }
+        });
+
+        if (activeSchedule) {
+            return res.json({ success: true, isActive: true, scheduleId: activeSchedule._id });
+        } else {
+            return res.json({ success: true, isActive: false });
+        }
     } catch (error) {
         return res.json({ success: false, message: error.message });
     }

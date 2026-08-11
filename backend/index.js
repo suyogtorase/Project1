@@ -56,10 +56,47 @@ io.on("connection", (socket)=>{
         console.log(`User ${userId} left room: ${classroomId}`);
     });
 
+    // WebRTC Live Classroom Signaling
+    socket.on("join-live-class", (roomId) => {
+        socket.join(roomId);
+        console.log(`User ${userId} joined Live Class room: ${roomId}`);
+        socket.to(roomId).emit("user-joined", { userId, socketId: socket.id });
+    });
+
+    socket.on("webrtc-offer", ({ targetSocketId, offer }) => {
+        socket.to(targetSocketId).emit("webrtc-offer", {
+            senderSocketId: socket.id,
+            offer,
+            senderUserId: userId
+        });
+    });
+
+    socket.on("webrtc-answer", ({ targetSocketId, answer }) => {
+        socket.to(targetSocketId).emit("webrtc-answer", {
+            senderSocketId: socket.id,
+            answer,
+        });
+    });
+
+    socket.on("webrtc-ice-candidate", ({ targetSocketId, candidate }) => {
+        socket.to(targetSocketId).emit("webrtc-ice-candidate", {
+            senderSocketId: socket.id,
+            candidate,
+        });
+    });
+
+    socket.on("leave-live-class", (roomId) => {
+        socket.leave(roomId);
+        console.log(`User ${userId} left Live Class room: ${roomId}`);
+        socket.to(roomId).emit("user-left", { socketId: socket.id, userId });
+    });
+
     socket.on("disconnect", ()=>{
         console.log("User Disconnected, ", userId);
         delete userSocketMap[userId];
-        io.emit("getOnlineUsers", Object.keys(userSocketMap))
+        io.emit("getOnlineUsers", Object.keys(userSocketMap));
+        // Tell everyone this socket left so WebRTC can clean up
+        socket.broadcast.emit("user-left", { socketId: socket.id, userId });
     })
 })
 
